@@ -7,9 +7,11 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container mt-5 d-flex flex-column align-items-center">
-        <h1 class="text-center">Todo List</h1>
-        <div class="d-flex mb-3">
+    <div class="container mt-5 d-flex flex-column align-items-center bg-light">
+        <div class="sticky-top">
+            <h1 class="text-center">Todo List</h1>
+            <div class="d-flex mb-3">
+
             <input 
                 type="text" 
                 id="newTask" 
@@ -22,7 +24,8 @@
                 class="btn btn-primary"
             >Add Task</button>
         </div>
-        <ul id="taskList" class="list-group list-group-numbered"></ul>
+    </div>
+        <ol id="taskList" class="list-group list-group-numbered w-50"></ol>
     </div>
     <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">

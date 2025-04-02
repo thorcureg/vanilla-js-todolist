@@ -6,12 +6,53 @@ document.addEventListener("DOMContentLoaded", function() {
   loadTasks();
 });
 
-
 addTaskButton.addEventListener("keydown",function(event) {
   if (event.key === "Enter") {
     addTask();
   }
 });
+
+function createTaskElement(taskText, completed = false) {
+  // Create the list item for the task
+  const taskItem = document.createElement("li");
+  taskItem.textContent = taskText;
+  taskItem.className = "list-group-item d-flex justify-content-between align-items-center";
+
+  if (completed) {
+    taskItem.style.textDecoration = "line-through";
+    taskItem.style.color = "gray";
+  }
+
+  // Create the complete button
+  const completeButton = document.createElement("button");
+  completeButton.textContent = completed ? "Uncomplete" : "Complete";
+  completeButton.className = "btn btn-secondary btn-sm me-2";
+
+  // Create the delete button
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.className = "btn btn-danger btn-sm";
+
+  // Append buttons to the task item
+  const buttonContainer = document.createElement("div");
+  buttonContainer.className = "d-flex";
+  buttonContainer.appendChild(completeButton);
+  buttonContainer.appendChild(deleteButton);
+
+  taskItem.appendChild(buttonContainer);
+
+  // Event listener for delete button
+  deleteButton.addEventListener("click", function () {
+    deleteTask(taskItem);
+  });
+
+  // Event listener for complete button
+  completeButton.addEventListener("click", function () {
+    completeTask(taskItem);
+  });
+
+  return taskItem;
+}
 
 function addTask() {
   const taskText = newTaskInput.value.trim();
@@ -21,38 +62,13 @@ function addTask() {
     return;
   }
 
-  const taskItem = document.createElement("li");
-  taskItem.textContent = taskText;
-  taskItem.className = "list-group-item";
-
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Delete";
-  deleteButton.className = "btn btn-danger list-group-item-action";
-  
-  const completeButton = document.createElement("button");
-  completeButton.textContent = "Complete";
-  completeButton.className = "btn btn-secondary list-group-item-action";
-  
-  taskItem.appendChild(completeButton);
-  taskItem.appendChild(deleteButton);
-
-  taskList.appendChild(taskItem);
-
-  deleteButton.addEventListener("click", function() {
-    deleteTask(taskItem);
-    alert("Task deleted successfully.");
-  });
-
-  completeButton.addEventListener("click", function() {
-    completeTask(taskItem);
-    alert("Task marked as complete.");
-  });
+  const taskElement = createTaskElement(taskText);
+  taskList.appendChild(taskElement);
 
   saveTasks();
   newTaskInput.value = '';
   newTaskInput.focus();
 }
-
 
 function deleteTask(taskItem){
   taskItem.remove();
@@ -78,7 +94,6 @@ function completeTask(taskItem) {
   saveTasks();
 }
 
-
 function saveTasks() {
   const tasks = [];
   taskList.querySelectorAll("li").forEach(taskItem => {
@@ -90,35 +105,12 @@ function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function loadTasks(){
+function loadTasks() {
   const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.forEach((task)=>{
-    const taskItem = document.createElement("li");
-    taskItem.textContent = task.text;
-
-    if(task.completed) {
-      taskItem.style.textDecoration = "line-through";
-      taskItem.style.color = "gray";
-    }
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-
-    const completeButton = document.createElement("button");
-    completeButton.textContent = "Complete";
-
-    taskItem.appendChild(completeButton);
-    taskItem.appendChild(deleteButton);
-  
-    taskList.appendChild(taskItem);
-
-    deleteButton.addEventListener("click", function() {
-      deleteTask(taskItem);
-    });
-
-    completeButton.addEventListener("click", function() {
-      completeTask(taskItem);
-    });
-  })
+  tasks.forEach((task) => {
+    const taskElement = createTaskElement(task.text, task.completed);
+    taskList.appendChild(taskElement);
+  });
 }
 
 
